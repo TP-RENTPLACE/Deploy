@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: apartments
+    environment:
+      POSTGRES_USER: kattsyn
+      POSTGRES_PASSWORD: katt
+      POSTGRES_DB: apartments_db
+    ports:
+      - "5432:5432"
+  backend:
+    image: kattsyn/apartments_under_construction
+    container_name: backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/apartments_db
+      SPRING_DATASOURCE_USER: kattsyn
+      SPRING_DATASOURCE_PASSWORD: katt
+      SERVER_PORT: 8080
