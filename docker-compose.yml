@@ -12,8 +12,7 @@ services:
       - pgdata:/var/lib/postgresql/data  
   backend:
     container_name: rentplace_main_service
-    build:
-      dockerfile: Dockerfile
+    image: kattsyn/rentplace-backend:latest
     ports:
       - "8080:8080"
     depends_on:
