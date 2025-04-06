@@ -17,6 +17,11 @@ jobs:
         with:
           repository: TP-RENTPLACE/Deploy
           path: deploy
+      - name: Create .env file
+        run: |
+            echo "DB_USER=${{ secrets.DB_USER }}" > .env
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+            echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
 
       - name: Update Docker Compose
         run: |
