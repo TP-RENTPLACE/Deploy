@@ -1,0 +1,35 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: ["Backend CI/CD"]
+    branches: [development]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Deploy repo
+        uses: actions/checkout@v4
+        with:
+          repository: TP-RENTPLACE/Deploy
+          path: deploy
+      - name: Create .env file
+        run: |
+            echo "DB_USER=${{ secrets.DB_USER }}" > .env
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+            echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+
+      - name: Update Docker Compose
+        run: |
+          sed -i "s|kattsyn/rentplace-backend:.*|kattsyn/rentplace-backend:${{ github.event.workflow_run.head_sha }}|" deploy/docker-compose.yml
+
+      - name: Deploy
+        working-directory: deploy
+        run: docker-compose up -d
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}

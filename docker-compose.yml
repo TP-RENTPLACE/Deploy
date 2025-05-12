@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: rentplace_postgres
+    environment:
+      POSTGRES_USER: $DB_USER
+      POSTGRES_PASSWORD: $DB_PASSWORD
+      POSTGRES_DB: $DB_NAME
+    volumes:
+      - pgdata:/var/lib/postgresql/data  
+  backend:
+    container_name: rentplace_main_service
+    image: kattsyn/rentplace-backend:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      UPLOAD_PATH: /uploads/
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/$DB_NAME
+      SPRING_DATASOURCE_USERNAME: $DB_USER
+      SPRING_DATASOURCE_PASSWORD: $DB_PASSWORD
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      SPRING_MAIL_USERNAME: $MAIL_USERNAME
+      SPRING_MAIL_PASSWORD: $MAIL_PASSWORD
+      SERVER_PORT: 8080
+      APP_BASE-URL: http://rentplace.online:8080
+      JWT_SECRET_ACCESS: $JWT_SECRET_ACCESS
+      JWT_SECRET_REFRESH: $JWT_SECRET_REFRESH
+      JWT_EXPIRATION-TIME-IN-MINUTES_ACCESS: $JWT_EXPIRATION_TIME_IN_MINUTES_ACCESS
+      JWT_EXPIRATION-TIME-IN-DAYS_REFRESH: $JWT_EXPIRATION_TIME_IN_DAYS_REFRESH
+      COMMISSION_FOR-RENTER_IN-PERCENT: $COMMISSION_FOR_RENTER_IN_PERCENT
+      COMMISSION_FOR-OWNER_IN-PERCENT: $COMMISSION_FOR_OWNER_IN_PERCENT
+      OPENROUTER_API_URL: $OPENROUTER_API_URL
+      OPENROUTER_API_KEY: $OPENROUTER_API_KEY
+      OPENROUTER_API_MODEL: $OPENROUTER_API_MODEL
+      OPENROUTER_API_DEFAULT-SYSTEM-PROMPT: $OPENROUTER_DEFAULT_SYSTEM_PROMPT
+    volumes: 
+      - uploads_volume:/uploads
+volumes:
+  pgdata:      
+  uploads_volume:
