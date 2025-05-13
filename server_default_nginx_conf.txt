@@ -1,0 +1,47 @@
+server {
+        listen 80 default_server;
+        #listen [::]:80 default_server;
+        server_name admin.rentplace.online;
+
+        root /var/www/admin/build;
+
+        index index.html index.htm index.nginx-debian.html;
+
+        #server_name _;
+
+        location / {
+                try_files $uri $uri/ /index.html;
+        }
+
+        location /api/v1 {
+                proxy_pass http://localhost:8080/api/v1;
+                proxy_set_header Host $host;
+                proxy_set_header X_Real_IP $remote_addr;
+                proxy_set_header X_Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+        }
+}
+
+server {
+        listen 80;
+        server_name rentplace.online www.rentplace.online;
+
+        root /var/www/client/build;
+        index index.html;
+
+        location / {
+                try_files $uri $uri/ /index.html;
+        }
+}
+
+#server {
+#       listen 80;
+#       server_name rentplace.online www.rentplace.online;
+#
+#       location /api/v1 {
+#               proxy_pass http://localhost:8080/api/v1;
+#               proxy_set_header Host $host;
+#               proxy_set_header X_Real-IP $remote_addr;
+#               proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#       }
+#}
