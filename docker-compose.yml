@@ -10,10 +10,20 @@ services:
       - ./nginx/sites:/etc/nginx/sites
       - ../react-admin/build:/usr/share/nginx/html/admin
       - ../react-client/build:/usr/share/nginx/html/client
-      #- ./nginx/ssl:/etc/nginx/ssl  # Для SSL-сертификатов
+      - ./certbot/www:/var/www/certbot  # Для верификации домена
+      - ./certbot/conf:/etc/letsencrypt  # SSL-сертификаты
     depends_on:
       - backend
     restart: unless-stopped
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    command: certonly --webroot -w /var/www/certbot --email warshard1337@gmail.com --agree-tos --no-eff-email -d rentplace.online -d admin.rentplace.online --keep-until-expiring --noninteractive
+    depends_on:
+      - nginx
   postgres:
     image: postgres:latest
     container_name: rentplace_postgres
