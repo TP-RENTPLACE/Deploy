@@ -1,4 +1,19 @@
 services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/sites:/etc/nginx/sites
+      - ../react-admin/build:/usr/share/nginx/html/admin
+      - ../react-client/build:/usr/share/nginx/html/client
+      #- ./nginx/ssl:/etc/nginx/ssl  # Для SSL-сертификатов
+    depends_on:
+      - backend
+    restart: unless-stopped
   postgres:
     image: postgres:latest
     container_name: rentplace_postgres
@@ -11,8 +26,8 @@ services:
   backend:
     container_name: rentplace_main_service
     image: kattsyn/rentplace-backend:latest
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
     depends_on:
       - postgres
     environment:
@@ -35,6 +50,7 @@ services:
       OPENROUTER_API_KEY: $OPENROUTER_API_KEY
       OPENROUTER_API_MODEL: $OPENROUTER_API_MODEL
       OPENROUTER_API_DEFAULT-SYSTEM-PROMPT: $OPENROUTER_API_DEFAULT_SYSTEM_PROMPT
+    restart: unless-stopped
     volumes: 
       - uploads_volume:/uploads
 volumes:
