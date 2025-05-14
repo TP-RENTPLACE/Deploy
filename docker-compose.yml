@@ -4,14 +4,14 @@ services:
     container_name: nginx
     ports:
       - "80:80"
-      #- "443:443"
+      - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/sites:/etc/nginx/sites
       - ../react-admin/build:/usr/share/nginx/html/admin
       - ../react-client/build:/usr/share/nginx/html/client
-      #- ./certbot/www:/var/www/certbot  # Для верификации домена
-      #- ./certbot/conf:/etc/letsencrypt  # SSL-сертификаты
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
     depends_on:
       - backend
     restart: unless-stopped
